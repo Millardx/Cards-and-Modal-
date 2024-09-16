@@ -1,0 +1,56 @@
+// Ensure `image` and `weatherIcon` are valid strings before using `startsWith()`
+const imageUrl = (image && !image.startsWith('http')) ? `http://localhost:5000${image}` : image;
+const weatherIconUrl = (weatherIcon && !weatherIcon.startsWith('http')) ? `http://localhost:5000${weatherIcon}` : weatherIcon;
+
+
+//Previous Fetch for Card and Modal Seperate 
+
+// Fetch card data
+  useEffect(() => {
+    axios.get('http://localhost:5000/card')
+      .then(response => {
+        if (response.data) {
+          setEditableData({
+            ...editableData,
+            ...response.data
+          });
+          setImagePreview(response.data.image ? http://localhost:5000${response.data.image} : '');
+          setWeatherIconPreview(response.data.weatherIcon ? http://localhost:5000${response.data.weatherIcon} : '');
+        }
+      })
+      .catch(error => console.error('Error fetching card data:', error));
+  }, []);
+
+  // Fetch modal data 
+  useEffect(() => {
+    if (isEditingModal) {
+      console.log('Fetching modal data...');
+      
+      axios.get('http://localhost:5000/modal')
+        .then(response => {
+          console.log('Modal data fetched:', response.data);
+          
+          if (response.data) {
+            setEditableData(prevData => ({
+              ...prevData,
+              modalTitle: response.data.modalTitle,
+              modalDescription: response.data.modalDescription,
+              modalImages: response.data.modalImages || []  // Ensure modalImages is an array
+            }));
+        
+            // Log the image URLs for debugging
+            console.log('Modal image URLs:', response.data.modalImages);
+  
+            // Set the modal image previews (if images are available)
+           // Set the modal image previews with proper URL formatting
+           setModalImagePreviews(response.data.modalImages
+            ? response.data.modalImages.map(image => http://localhost:5000/${image})
+            : []);
+        }
+      })
+        .catch(error => {
+          console.error('Error fetching modal data:', error);
+        });
+    }
+  }, [isEditingModal]);
+   // Dependency array includes isEditingModal
